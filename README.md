@@ -33,12 +33,12 @@ The following is a description of SRP-6 and 6a, the latest versions of SRP:
 
         Host:  S = (Av^u) ^ b              (computes session key)
         Host:  K = H(S)
- # diff between standard and apple
+# Diff between standard and apple
 	 u = H(A,B)  ==> u = sha256(A+B) 
 	 k = H(N,g)  ==>  k = sha256(N+g)  N is 256byte big-endian order,  g is256 byte big-endian order bytes
 	 x = H(s,p)  ==> apple's s => H(":"+P) without username
 	 P password field P = hmac(pass, salt, iter) where pass = sha256(password_text)
-# apple M1 field 
+# Apple M1 field 
 	i = H(g) xor H(N)
 	M1 = H(i) + H(I) + H(salt) + H(A) + H(B) + H(K) 
 	+  ==>  sha256_update
