@@ -47,8 +47,8 @@ func (kls *SRPClient) ProcessClientChanllenge(username, password, salt, B []byte
 	k := c.Multiplier
 	S := c.Params.calculateS(k, c.X, c.Secret1, bigB, u)
 	c.K = c.Params.calculateK(S)
-	c.u = u               // Only for tests
-	c.s = intFromBytes(S) // Only for tests
+	c.u = u
+	c.s = intFromBytes(S)
 	A := padToN(c.A, c.Params)
 	c.M1 = c.Params.calculateM1(username, salt, A, B, c.K)
 	c.M2 = c.Params.calculateM2(A, c.M1, c.K)

@@ -80,6 +80,11 @@ func (params *SRPParams) Digest(message []byte) []byte {
 
 //calculateM1 apple login M1
 func (params *SRPParams) calculateM1(username, salt, A, B, K []byte) []byte {
+	/*
+		i = H(g) xor H(N)
+		M1 = H(i) + H(I) + H(salt) + H(A) + H(B) + H(K)
+		+  ==>  sha256_update
+	*/
 	// A,B 必须对齐，不然gg
 	digestn := params.Digest(padToN(params.G, params))
 	digestg := params.Digest(params.N.Bytes())

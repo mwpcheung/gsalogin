@@ -7,7 +7,7 @@ import (
 )
 
 func GSALogin(username, password string, udid, imd, imdm string) (*GSAStatus, []byte) {
-	context := NewLoginSession("mwpcheung@gmail.com", "password_clear_text")
+	context := NewLoginSession(username, password)
 	var status GSAStatus
 	resp := context.LoginStep1(udid, imd, imdm)
 	if resp.Status.ErrorCode != 0 {
@@ -26,15 +26,14 @@ func GSALogin(username, password string, udid, imd, imdm string) (*GSAStatus, []
 	if resp2.Status.ErrorCode != 0 {
 		logs.Debug("登陆失败 %d %s", resp2.Status.ErrorCode, resp2.Status.ErrorMessage)
 		return &resp2.Status, nil
-	} else {
-		//解密spd
-		M2 := resp2.M2
-		if hex.EncodeToString(M2) != hex.EncodeToString(context.srp.M2) {
-			logs.Debug("srp M2 校验失败")
-			status.ErrorCode = 1001
-			status.ErrorMessage = "m2 check failed"
-			return &status, nil
-		}
+	}
+	//解密spd
+	M2 := resp2.M2
+	if hex.EncodeToString(M2) != hex.EncodeToString(context.srp.M2) {
+		logs.Debug("srp M2 校验失败")
+		status.ErrorCode = 1001
+		status.ErrorMessage = "m2 check failed"
+		return &status, nil
 	}
 	if len(resp2.SPD) > 0 {
 		dict := context.HandleStep2(resp2)
