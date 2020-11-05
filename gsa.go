@@ -9,8 +9,9 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"hash"
-	"pphelp/dict"
 	"time"
+
+	"github.com/mwpcheung/dict"
 
 	"golang.org/x/crypto/pbkdf2"
 )

@@ -1,11 +1,9 @@
 package main
 
 import (
-	"pphelp/plistlib"
-	"webv/net"
+	"log"
 
-	"github.com/DHowett/go-plist"
-	"github.com/astaxie/beego/logs"
+	"howett.net/plist"
 )
 
 type GSARequestCPD struct {
@@ -83,28 +81,27 @@ func PostLoginStep1Request(req *GSAStep1Request) *GSAStep1Response {
 	request.Header.Version = "1.0.1"
 	request.Request = req
 	body, err := plist.MarshalIndent(&request, plist.XMLFormat, "\t")
-	// body, err := plistlib.MarshalIndent(reqDict, plistlib.XMLFormat, "\t")
 	if err != nil {
-		logs.Debug("format plist failed %v", err)
+		log.Printf("format plist failed %v", err)
 		return nil
 	}
 	uri := "https://gsa.apple.com/grandslam/GsService2"
-	h := net.NewHeader()
+	h := NewHeader()
 	h.Header["User-Agent"] = []string{"akd/1.0 CFNetwork/808.2.16 Darwin/16.3.0"}
 	h.Header["X-MMe-Client-Info"] = []string{"<iPhone7,2> <iPhone OS;10.2;14C92> <com.apple.akd/1.0 (com.apple.akd/1.0)>"}
 	h.Header["Accept-Language"] = []string{"zh-cn"}
 	h.Header["Content-Type"] = []string{"text/x-xml-plist"}
-	proxy := net.Proxy{Type: net.HTTP, Address: "http://localhost:8888"}
-	resp := net.Request(uri, &proxy, &h.Header, nil, body)
-	if err := resp.Error; err != nil {
-		logs.Debug("返回错误 %v", err)
+	proxy := Proxy{Type: HTTP, Address: "http://localhost:8888"}
+	_, respBody, err := WebRequestMethod(uri, "POST", &proxy, &h.Header, nil, body)
+	if err != nil {
+		log.Printf("返回错误 %v", err)
 		return nil
 	}
 	type Response struct {
 		Response *GSAStep1Response `plist:"Response"`
 	}
 	var respone Response
-	plistlib.Unmarshal(resp.Body, &respone)
+	plist.Unmarshal(respBody, &respone)
 	return respone.Response
 }
 func PostLoginStep2Request(req *GSAStep2Request) *GSAStep2Response {
@@ -120,21 +117,21 @@ func PostLoginStep2Request(req *GSAStep2Request) *GSAStep2Response {
 	request.Request = req
 	body, _ := plist.MarshalIndent(&request, plist.XMLFormat, "\t")
 	uri := "https://gsa.apple.com/grandslam/GsService2"
-	h := net.NewHeader()
+	h := NewHeader()
 	h.Header["User-Agent"] = []string{"akd/1.0 CFNetwork/808.2.16 Darwin/16.3.0"}
 	h.Header["X-MMe-Client-Info"] = []string{"<iPhone7,2> <iPhone OS;10.2;14C92> <com.apple.akd/1.0 (com.apple.akd/1.0)>"}
 	h.Header["Accept-Language"] = []string{"zh-cn"}
 	h.Header["Content-Type"] = []string{"text/x-xml-plist"}
-	proxy := net.Proxy{Type: net.HTTP, Address: "http://localhost:8888"}
-	resp := net.Request(uri, &proxy, &h.Header, nil, body)
-	if err := resp.Error; err != nil {
-		logs.Debug("返回错误 %v", err)
+	proxy := Proxy{Type: HTTP, Address: "http://localhost:8888"}
+	_, respBody, err := WebRequestMethod(uri, "POST", &proxy, &h.Header, nil, body)
+	if err != nil {
+		log.Printf("返回错误 %v", err)
 		return nil
 	}
 	type Response struct {
 		Response *GSAStep2Response `plist:"Response"`
 	}
 	var respone Response
-	plistlib.Unmarshal(resp.Body, &respone)
+	plist.Unmarshal(respBody, &respone)
 	return respone.Response
 }
