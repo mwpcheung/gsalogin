@@ -42,3 +42,8 @@ The following is a description of SRP-6 and 6a, the latest versions of SRP:
 	i = H(g) xor H(N)
 	M1 = H(i) + H(I) + H(salt) + H(A) + H(B) + H(K) 
 	+  ==>  sha256_update
+ # x-apple-i-md pairs
+ 	It's apple device time based token pairs. the token ticket is stored on akd-container-data//Library/adi.pb 
+  	This file can store one or more  accounts device token ticket. when a device is newly active the akd process
+   	exchange an apple signed binary blob. the ticket is based on adid process but the code is obfuscated by fairplay 
+    	after-clang-obj compiler engine. it's hard to know what happened in the adid.
