@@ -43,8 +43,17 @@ The following is a description of SRP-6 and 6a, the latest versions of SRP:
 	M1 = H(i) + H(I) + H(salt) + H(A) + H(B) + H(K) 
 	+  ==>  sha256_update
  # x-apple-i-md pairs
- 	It's apple device time based token pairs. the token ticket is stored on akd-container-data//Library/adi.pb 
+ 	It's apple device time based token pairs. the time base is updated every 30 seconds, aligned to the
+ 	half-minute boundary. the token ticket is stored on akd-container-data//Library/adi.pb
   	This file can store one or more  accounts device token ticket. when a device is newly active the akd process
-   	exchange an apple signed binary blob. the ticket is based on adid process but the code is obfuscated by 
-	fairplay after-clang-obj compiler engine. it's hard to know what happened in the adid. Need this web-service?
-	contact me. 
+   	exchange an apple signed binary blob. the ticket is based on adid process but the code is heavily
+	obfuscated, so it's hard to know what happened in the adid.
+	The adi.pb storage rules vary slightly across platforms, but overall the file is encrypted, and the core
+	dependency is the input device information.
+	Reversing this part of the algorithm is extremely difficult: so far, no one has published a human-readable
+	reconstruction of the algorithm after stripping its OLLVM obfuscation.
+	If you are interested in this part, refer to the mwpcheung/akikit project, which provides a stable and
+	general-purpose interface you can use. By leveraging CPU virtualization technology, akikit can emulate the
+	computation across different platforms (iOS, macOS, Linux-Android, Windows) with stable, high-performance
+	results, at around 300ms per computation. The latency mainly comes from loading and parsing the binary
+	file, the instruction warm-up, and the extremely heavy computation of the OLLVM-obfuscated code.
